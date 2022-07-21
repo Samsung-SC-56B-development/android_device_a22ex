@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Copyright (C) 2012 The Android Open Source Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+
+<!--
+<!DOCTYPE MediaCodecs [
+<!ELEMENT MediaCodecs (Decoders,Encoders)>
+<!ELEMENT Decoders (MediaCodec*)>
+<!ELEMENT Encoders (MediaCodec*)>
+<!ELEMENT MediaCodec (Type*,Quirk*)>
+<!ATTLIST MediaCodec name CDATA #REQUIRED>
+<!ATTLIST MediaCodec type CDATA>
+<!ELEMENT Type EMPTY>
+<!ATTLIST Type name CDATA #REQUIRED>
+<!ELEMENT Quirk EMPTY>
+<!ATTLIST Quirk name CDATA #REQUIRED>
+]>
+
+There's a simple and a complex syntax to declare the availability of a
+media codec:
+
+A codec that properly follows the OpenMax spec and therefore doesn't have any
+quirks and that only supports a single content type can be declared like so:
+
+    <MediaCodec name="OMX.foo.bar" type="something/interesting" />
+
+If a codec has quirks OR supports multiple content types, the following syntax
+can be used:
+
+    <MediaCodec name="OMX.foo.bar" >
+        <Type name="something/interesting" />
+        <Type name="something/else" />
+        ...
+        <Quirk name="requires-allocate-on-input-ports" />
+        <Quirk name="requires-allocate-on-output-ports" />
+        <Quirk name="output-buffers-are-unreadable" />
+    </MediaCodec>
+
+Only the three quirks included above are recognized at this point:
+
+"requires-allocate-on-input-ports"
+    must be advertised if the component does not properly support specification
+    of input buffers using the OMX_UseBuffer(...) API but instead requires
+    OMX_AllocateBuffer to be used.
+
+"requires-allocate-on-output-ports"
+    must be advertised if the component does not properly support specification
+    of output buffers using the OMX_UseBuffer(...) API but instead requires
+    OMX_AllocateBuffer to be used.
+
+"output-buffers-are-unreadable"
+    must be advertised if the emitted output buffers of a decoder component
+    are not readable, i.e. use a custom format even though abusing one of
+    the official OMX colorspace constants.
+    Clients of such decoders will not be able to access the decoded data,
+    naturally making the component much less useful. The only use for
+    a component with this quirk is to render the output to the screen.
+    Audio decoders MUST NOT advertise this quirk.
+    Video decoders that advertise this quirk must be accompanied by a
+    corresponding color space converter for thumbnail extraction,
+    matching surfaceflinger support that can render the custom format to
+    a texture and possibly other code, so just DON'T USE THIS QUIRK.
+
+    2012/07/13 config for MTK OMX Media Codecs, created by Morris Yang (mtk03147)
+-->
+
+<MediaCodecs>
+    <Encoders>
+        <MediaCodec name="OMX.MTK.VIDEO.ENCODER.AVC" type="video/avc" update="true">
+            <!-- measured [445-451] lower-upper [113-1205] median * 1.5 [672] -->
+            <Limit name="measured-frame-rate-320x240" range="249-548" />
+            <!-- measured [169-169] lower-upper [43-456] median * 1.5 [254] -->
+            <Limit name="measured-frame-rate-720x480" range="94-207" />
+            <!-- measured [121-121] lower-upper [31-327] median * 1.5 [182] -->
+            <Limit name="measured-frame-rate-1280x720" range="67-148" />
+            <!-- measured [64-64] lower-upper [16-173] median * 1.5 [96] -->
+            <Limit name="measured-frame-rate-1920x1080" range="36-79" />
+        </MediaCodec>
+        <MediaCodec name="OMX.MTK.VIDEO.ENCODER.H263" type="video/3gpp" update="true">
+            <!-- measured [511-561] lower-upper [135-1442] median * 1.5 [804] -->
+            <Limit name="measured-frame-rate-176x144" range="298-656" />
+        </MediaCodec>
+        <MediaCodec name="OMX.MTK.VIDEO.ENCODER.HEVC" type="video/hevc" update="true">
+            <!-- measured [402-460] lower-upper [109-1160] median * 1.5 [647] -->
+            <Limit name="measured-frame-rate-320x240" range="240-527" />
+            <!-- measured [177-180] lower-upper [45-481] median * 1.5 [268] -->
+            <Limit name="measured-frame-rate-720x480" range="99-219" />
+            <!-- measured [131-131] lower-upper [33-354] median * 1.5 [197] -->
+            <Limit name="measured-frame-rate-1280x720" range="73-161" />
+            <!-- measured [84-84] lower-upper [21-227] median * 1.5 [126] -->
+            <Limit name="measured-frame-rate-1920x1080" range="47-103" />
+        </MediaCodec>
+        <MediaCodec name="OMX.MTK.VIDEO.ENCODER.MPEG4" type="video/mp4v-es" update="true">
+            <!-- measured [510-527] lower-upper [131-1396] median * 1.5 [778] -->
+            <Limit name="measured-frame-rate-176x144" range="288-634" />
+        </MediaCodec>
+        <MediaCodec name="c2.android.avc.encoder" type="video/avc" update="true">
+            <!-- measured [270-273] lower-upper [69-731] median * 1.5 [407] -->
+            <Limit name="measured-frame-rate-320x240" range="151-332" />
+            <!-- measured [139-140] lower-upper [35-376] median * 1.5 [209] -->
+            <Limit name="measured-frame-rate-720x480" range="78-171" />
+        </MediaCodec>
+        <MediaCodec name="c2.android.h263.encoder" type="video/3gpp" update="true">
+            <!-- measured [289-293] lower-upper [74-784] median * 1.5 [437] -->
+            <Limit name="measured-frame-rate-176x144" range="162-357" />
+        </MediaCodec>
+        <MediaCodec name="c2.android.mpeg4.encoder" type="video/mp4v-es" update="true">
+            <!-- measured [291-292] lower-upper [74-785] median * 1.5 [437] -->
+            <Limit name="measured-frame-rate-176x144" range="162-357" />
+        </MediaCodec>
+        <MediaCodec name="c2.android.vp8.encoder" type="video/x-vnd.on2.vp8" update="true">
+            <!-- measured [250-251] lower-upper [63-675] median * 1.5 [376] -->
+            <Limit name="measured-frame-rate-320x180" range="139-307" />
+            <!-- measured [123-126] lower-upper [32-336] median * 1.5 [187] -->
+            <Limit name="measured-frame-rate-640x360" range="69-153" />
+            <!-- measured [36-36] lower-upper [9-99] median * 1.5 [55] -->
+            <Limit name="measured-frame-rate-1280x720" range="20-45" />
+        </MediaCodec>
+    </Encoders>
+    <Decoders>
+        <MediaCodec name="OMX.MTK.VIDEO.DECODER.AVC" type="video/avc" update="true">
+            <!-- measured [674-701] lower-upper [174-1851] median * 1.5 [1032] -->
+            <Limit name="measured-frame-rate-320x240" range="382-841" />
+            <!-- measured [349-351] lower-upper [89-943] median * 1.5 [525] -->
+            <Limit name="measured-frame-rate-720x480" range="195-428" />
+            <!-- measured [176-177] lower-upper [45-475] median * 1.5 [265] -->
+            <Limit name="measured-frame-rate-1280x720" range="98-216" />
+            <!-- measured [97-98] lower-upper [25-263] median * 1.5 [146] -->
+            <Limit name="measured-frame-rate-1920x1080" range="54-120" />
+        </MediaCodec>
+        <MediaCodec name="OMX.MTK.VIDEO.DECODER.H263" type="video/3gpp" update="true">
+            <!-- measured [922-939] lower-upper [235-2503] median * 1.5 [1396] -->
+            <Limit name="measured-frame-rate-176x144" range="517-1138" />
+            <!-- measured [608-611] lower-upper [154-1641] median * 1.5 [915] -->
+            <Limit name="measured-frame-rate-352x288" range="339-746" />
+        </MediaCodec>
+        <MediaCodec name="OMX.MTK.VIDEO.DECODER.HEVC" type="video/hevc" update="true">
+            <!-- measured [697-701] lower-upper [177-1881] median * 1.5 [1049] -->
+            <Limit name="measured-frame-rate-352x288" range="389-855" />
+            <!-- measured [510-516] lower-upper [130-1380] median * 1.5 [769] -->
+            <Limit name="measured-frame-rate-640x360" range="285-627" />
+            <!-- measured [449-449] lower-upper [114-1209] median * 1.5 [674] -->
+            <Limit name="measured-frame-rate-720x480" range="250-550" />
+            <!-- measured [252-256] lower-upper [64-684] median * 1.5 [381] -->
+            <Limit name="measured-frame-rate-1280x720" range="141-311" />
+            <!-- measured [168-170] lower-upper [43-456] median * 1.5 [254] -->
+            <Limit name="measured-frame-rate-1920x1080" range="94-207" />
+        </MediaCodec>
+        <MediaCodec name="OMX.MTK.VIDEO.DECODER.MPEG4" type="video/mp4v-es" update="true">
+            <!-- measured [957-977] lower-upper [244-2602] median * 1.5 [1451] -->
+            <Limit name="measured-frame-rate-176x144" range="538-1183" />
+            <!-- measured [439-453] lower-upper [113-1201] median * 1.5 [670] -->
+            <Limit name="measured-frame-rate-480x360" range="248-546" />
+        </MediaCodec>
+        <MediaCodec name="OMX.MTK.VIDEO.DECODER.VP9" type="video/x-vnd.on2.vp9" update="true">
+            <!-- measured [459-463] lower-upper [117-1241] median * 1.5 [692] -->
+            <Limit name="measured-frame-rate-320x180" range="257-564" />
+            <!-- measured [282-283] lower-upper [71-761] median * 1.5 [424] -->
+            <Limit name="measured-frame-rate-640x360" range="157-346" />
+            <!-- measured [119-119] lower-upper [30-322] median * 1.5 [179] -->
+            <Limit name="measured-frame-rate-1280x720" range="66-146" />
+            <!-- measured [79-79] lower-upper [20-214] median * 1.5 [119] -->
+            <Limit name="measured-frame-rate-1920x1080" range="44-97" />
+        </MediaCodec>
+        <MediaCodec name="OMX.MTK.VIDEO.DECODER.VPX" type="video/x-vnd.on2.vp8" update="true">
+            <!-- measured [279-282] lower-upper [71-755] median * 1.5 [421] -->
+            <Limit name="measured-frame-rate-320x180" range="156-343" />
+            <!-- measured [194-194] lower-upper [49-522] median * 1.5 [291] -->
+            <Limit name="measured-frame-rate-640x360" range="108-237" />
+            <!-- measured [119-120] lower-upper [30-323] median * 1.5 [179] -->
+            <Limit name="measured-frame-rate-1280x720" range="67-147" />
+            <!-- measured [71-80] lower-upper [19-204] median * 1.5 [113] -->
+            <Limit name="measured-frame-rate-1920x1080" range="42-93" />
+        </MediaCodec>
+        <MediaCodec name="OMX.SEC.avc.sw.dec" type="video/avc" update="true">
+            <!-- measured [214-216] lower-upper [54-579] median * 1.5 [323] -->
+            <Limit name="measured-frame-rate-320x240" range="120-263" />
+            <!-- measured [72-72] lower-upper [18-195] median * 1.5 [108] -->
+            <Limit name="measured-frame-rate-720x480" range="40-89" />
+            <!-- measured [64-64] lower-upper [16-174] median * 1.5 [96] -->
+            <Limit name="measured-frame-rate-1280x720" range="36-79" />
+            <!-- measured [31-31] lower-upper [8-86] median * 1.5 [47] -->
+            <Limit name="measured-frame-rate-1920x1080" range="18-39" />
+        </MediaCodec>
+        <MediaCodec name="OMX.SEC.mpeg4.sw.dec" type="video/mp4v-es" update="true">
+            <!-- measured [1769-1777] lower-upper [448-4769] median * 1.5 [2660] -->
+            <Limit name="measured-frame-rate-176x144" range="985-2168" />
+            <!-- measured [503-1256] lower-upper [222-2366] median * 1.5 [1320] -->
+            <Limit name="measured-frame-rate-480x360" range="489-1076" />
+        </MediaCodec>
+        <MediaCodec name="c2.android.avc.decoder" type="video/avc" update="true">
+            <!-- measured [126-127] lower-upper [32-341] median * 1.5 [190] -->
+            <Limit name="measured-frame-rate-320x240" range="70-155" />
+            <!-- measured [59-59] lower-upper [15-160] median * 1.5 [89] -->
+            <Limit name="measured-frame-rate-720x480" range="33-73" />
+            <!-- measured [28-28] lower-upper [7-77] median * 1.5 [43] -->
+            <Limit name="measured-frame-rate-1280x720" range="16-35" />
+            <!-- measured [15-16] lower-upper [4-43] median * 1.5 [24] -->
+            <Limit name="measured-frame-rate-1920x1080" range="9-20" />
+        </MediaCodec>
+        <MediaCodec name="c2.android.h263.decoder" type="video/3gpp" update="true">
+            <!-- measured [332-413] lower-upper [94-1003] median * 1.5 [559] -->
+            <Limit name="measured-frame-rate-176x144" range="207-456" />
+            <!-- measured [352-406] lower-upper [96-1020] median * 1.5 [569] -->
+            <Limit name="measured-frame-rate-352x288" range="211-464" />
+        </MediaCodec>
+        <MediaCodec name="c2.android.hevc.decoder" type="video/hevc" update="true">
+            <!-- measured [267-292] lower-upper [71-752] median * 1.5 [419] -->
+            <Limit name="measured-frame-rate-352x288" range="155-342" />
+            <!-- measured [189-191] lower-upper [48-513] median * 1.5 [285] -->
+            <Limit name="measured-frame-rate-640x360" range="106-233" />
+            <!-- measured [177-187] lower-upper [46-491] median * 1.5 [273] -->
+            <Limit name="measured-frame-rate-720x480" range="101-223" />
+            <!-- measured [81-81] lower-upper [21-219] median * 1.5 [122] -->
+            <Limit name="measured-frame-rate-1280x720" range="45-100" />
+        </MediaCodec>
+        <MediaCodec name="c2.android.mpeg4.decoder" type="video/mp4v-es" update="true">
+            <!-- measured [473-483] lower-upper [121-1287] median * 1.5 [717] -->
+            <Limit name="measured-frame-rate-176x144" range="266-585" />
+        </MediaCodec>
+        <MediaCodec name="c2.android.vp8.decoder" type="video/x-vnd.on2.vp8" update="true">
+            <!-- measured [506-513] lower-upper [129-1370] median * 1.5 [764] -->
+            <Limit name="measured-frame-rate-320x180" range="283-623" />
+            <!-- measured [296-298] lower-upper [75-800] median * 1.5 [446] -->
+            <Limit name="measured-frame-rate-640x360" range="165-364" />
+            <!-- measured [77-78] lower-upper [20-210] median * 1.5 [117] -->
+            <Limit name="measured-frame-rate-1280x720" range="43-95" />
+        </MediaCodec>
+        <MediaCodec name="c2.android.vp9.decoder" type="video/x-vnd.on2.vp9" update="true">
+            <!-- measured [348-352] lower-upper [89-943] median * 1.5 [525] -->
+            <Limit name="measured-frame-rate-320x180" range="195-428" />
+            <!-- measured [282-289] lower-upper [72-769] median * 1.5 [429] -->
+            <Limit name="measured-frame-rate-640x360" range="159-350" />
+            <!-- measured [51-52] lower-upper [13-139] median * 1.5 [77] -->
+            <Limit name="measured-frame-rate-1280x720" range="29-63" />
+        </MediaCodec>
+        <MediaCodec name="c2.sec.mpeg4.decoder" type="video/mp4v-es" update="true">
+            <!-- measured [457-688] lower-upper [145-1541] median * 1.5 [859] -->
+            <Limit name="measured-frame-rate-176x144" range="318-700" />
+            <!-- measured [642-655] lower-upper [164-1745] median * 1.5 [973] -->
+            <Limit name="measured-frame-rate-480x360" range="361-793" />
+            <!-- measured [192-196] lower-upper [49-523] median * 1.5 [291] -->
+            <Limit name="measured-frame-rate-1280x720" range="108-238" />
+        </MediaCodec>
+    </Decoders>
+</MediaCodecs>
